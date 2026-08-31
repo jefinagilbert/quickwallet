@@ -4,7 +4,7 @@ import loginController from "../../controllers/auth/loginController.js";
 
 const authRouter = express.Router();
 
-// Creating a user
+// Creating a user / registration
 authRouter.post("/signin", createUserController);
 
 // Login user

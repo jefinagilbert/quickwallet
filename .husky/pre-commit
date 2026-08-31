@@ -1,0 +1,2 @@
+npm test --prefix backend
+npx lint-staged
