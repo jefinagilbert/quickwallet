@@ -1,12 +1,23 @@
 {
-    "name": "quickwallet-monorepo",
-    "private": true,
-    "workspaces": [
-        "backend",
-        "frontend"
-    ],
-    "scripts": {
-        "dev:backend": "npm run dev --workspace=backend",
-        "dev:frontend": "npm run dev --workspace=frontend"
-    }
+  "name": "quickwallet-monorepo",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev:backend": "npm run dev --workspace=backend",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "prepare": "husky || true"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.4.1",
+    "prettier": "^3.9.6"
+  },
+  "lint-staged": {
+    "*.{js,json,md}": [
+      "prettier --write"
+    ]
+  }
 }
