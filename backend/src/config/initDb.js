@@ -1,7 +1,7 @@
 import pool from "./db.js";
 
 const createInitialTables = async () => {
-    const SQL_QUERY = `
+  const SQL_QUERY = `
         -- 1. Sequences
         CREATE SEQUENCE IF NOT EXISTS users_id_seq
         START WITH 2300500;
@@ -25,6 +25,7 @@ const createInitialTables = async () => {
         -- 3. Transactions
         CREATE TABLE IF NOT EXISTS transactions (
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            idempotency_key VARCHAR(255) UNIQUE,
             description VARCHAR(200),
             status VARCHAR(30) NOT NULL DEFAULT 'PENDING',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -50,15 +51,15 @@ const createInitialTables = async () => {
         );
     `;
 
-    try {
-        console.log("Creating intital tables");
-        const result = await pool.query(SQL_QUERY);
-        console.log("Tables Created successfully");
-    } catch (e) {
-        console.log("Something wrong....");
-    } finally {
-        pool.end();
-    }
-}
+  try {
+    console.log("Creating intital tables");
+    const result = await pool.query(SQL_QUERY);
+    console.log("Tables Created successfully");
+  } catch (e) {
+    console.log("Something wrong....");
+  } finally {
+    pool.end();
+  }
+};
 
 createInitialTables();
