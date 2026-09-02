@@ -1,6 +1,6 @@
 import pool from "./db.js";
 
-const createInitialTables = async () => {
+const createInitialTables = async (): Promise<void> => {
   const SQL_QUERY = `
         -- 1. Sequences
         CREATE SEQUENCE IF NOT EXISTS users_id_seq
@@ -53,13 +53,13 @@ const createInitialTables = async () => {
 
   try {
     console.log("Creating intital tables");
-    const result = await pool.query(SQL_QUERY);
+    await pool.query(SQL_QUERY);
     console.log("Tables Created successfully");
-  } catch (e) {
-    console.log("Something wrong....");
+  } catch (e: unknown) {
+    console.error("Something wrong....", e instanceof Error ? e.message : e);
   } finally {
-    pool.end();
+    await pool.end();
   }
 };
 
-createInitialTables();
+void createInitialTables();

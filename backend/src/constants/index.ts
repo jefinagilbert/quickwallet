@@ -3,7 +3,7 @@ const TRANSACTION_STATUS = Object.freeze({
   COMPLETED: "COMPLETED",
   FAILED: "FAILED",
   REFUNDED: "REFUNDED",
-});
+} as const);
 
 const ERROR_MESSAGES = Object.freeze({
   USER_EXISTS: "A user with this email already exists.",
@@ -19,6 +19,11 @@ const ERROR_MESSAGES = Object.freeze({
   INTERNAL_SERVER_ERROR: "Internal Server Error",
   UNAUTHORIZED_USER: "Unauthorized: Token not found!",
   UNAUTHORIZED_INVALID_EXPIRED: "Unauthorized: Invalid/Expired",
-});
+} as const);
+
+type TransactionStatus =
+  (typeof TRANSACTION_STATUS)[keyof typeof TRANSACTION_STATUS];
+type ErrorMessage = (typeof ERROR_MESSAGES)[keyof typeof ERROR_MESSAGES];
 
 export { TRANSACTION_STATUS, ERROR_MESSAGES };
+export type { TransactionStatus, ErrorMessage };

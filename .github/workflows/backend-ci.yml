@@ -57,11 +57,17 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Type Check
+        run: npm run typecheck
+
+      - name: Build Project
+        run: npm run build
+
       - name: Verify Database Initialization
-        run: node src/config/initDb.js
+        run: npx tsx src/config/initDb.ts
 
       - name: Verify Bank Seed Script
-        run: node src/config/seedBank.js
+        run: npx tsx src/config/seedBank.ts
 
       - name: Run Tests
         run: npm test --if-present

@@ -1,17 +1,17 @@
-import express from "express";
+import express, { type Express } from "express";
 import authRouter from "./routers/auth/authRouter.js";
 import transferRouter from "./routers/transfer/transferRouter.js";
 
-const app = express();
+const app: Express = express();
 
-const PORT = process.env.PORT || 3000;
+const PORT: number | string = process.env.PORT || 3000;
 
 app.use(express.json());
 
 // Routers
 app.use("/auth", authRouter);
 
-// Tranfer
+// Transfer
 app.use("/transfer", transferRouter);
 
 if (process.env.NODE_ENV !== "test") {
