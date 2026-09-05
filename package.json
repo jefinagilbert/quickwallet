@@ -6,16 +6,22 @@
     "frontend"
   ],
   "scripts": {
-    "dev:backend": "npm run dev --workspace=backend",
-    "dev:frontend": "npm run dev --workspace=frontend",
-    "build:backend": "npm run build --workspace=backend",
-    "typecheck:backend": "npm run typecheck --workspace=backend",
-    "test:backend": "npm run test --workspace=backend",
+    "dev:backend": "yarn workspace quickwallet-backend dev",
+    "dev:frontend": "yarn workspace quickwallet start",
+    "android": "yarn workspace quickwallet android",
+    "ios": "yarn workspace quickwallet ios",
+    "build:backend": "yarn workspace quickwallet-backend build",
+    "typecheck:backend": "yarn workspace quickwallet-backend typecheck",
+    "typecheck:frontend": "yarn workspace quickwallet typecheck",
+    "typecheck": "yarn typecheck:backend && yarn typecheck:frontend",
+    "test:backend": "yarn workspace quickwallet-backend test",
+    "test:frontend": "yarn workspace quickwallet test",
+    "test": "yarn test:backend && yarn test:frontend",
     "prepare": "husky || true"
   },
   "devDependencies": {
     "husky": "^9.1.7",
-    "lint-staged": "^17.4.1",
+    "lint-staged": "^15.4.3",
     "prettier": "^3.9.6"
   },
   "lint-staged": {
