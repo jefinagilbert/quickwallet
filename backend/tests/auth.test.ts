@@ -29,10 +29,23 @@ const mockCreateUser =
     ) => Promise<Pick<User, "name" | "email" | "created_at"> | null>
   >();
 
+const mockIsTokenBlacklisted = jest.fn<(token: string) => Promise<boolean>>();
+const mockBlacklistToken =
+  jest.fn<(token: string, expiresInSeconds: number) => Promise<void>>();
+
+jest.unstable_mockModule("../src/services/auth/blacklistService.js", () => ({
+  isTokenBlacklisted: mockIsTokenBlacklisted,
+  blacklistToken: mockBlacklistToken,
+}));
+
 jest.unstable_mockModule("../src/repositories/auth/authRepository.js", () => ({
   findUserByEmail: mockFindUserByEmail,
   createUser: mockCreateUser,
   createUserWithBonus: mockCreateUserWithBonus,
+}));
+
+jest.unstable_mockModule("../src/middlewares/rateLimiter.js", () => ({
+  loginRateLimiter: (_req: unknown, _res: unknown, next: () => void) => next(),
 }));
 
 // 2. Dynamically import app and supertest after mock is registered
@@ -44,6 +57,7 @@ const { default: request } = await import("supertest");
 describe("Auth Tests (Mocked DB)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIsTokenBlacklisted.mockResolvedValue(false);
   });
 
   describe("POST /auth/signin (Registration)", () => {

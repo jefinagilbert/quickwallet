@@ -19,6 +19,15 @@ const mockTransferRepository =
     ) => Promise<TransferResult>
   >();
 
+const mockIsTokenBlacklisted = jest.fn<(token: string) => Promise<boolean>>();
+const mockBlacklistToken =
+  jest.fn<(token: string, expiresInSeconds: number) => Promise<void>>();
+
+jest.unstable_mockModule("../src/services/auth/blacklistService.js", () => ({
+  isTokenBlacklisted: mockIsTokenBlacklisted,
+  blacklistToken: mockBlacklistToken,
+}));
+
 jest.unstable_mockModule(
   "../src/repositories/transfer/transferRepository.js",
   () => ({
@@ -38,6 +47,7 @@ describe("Transfer Tests (Mocked DB)", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIsTokenBlacklisted.mockResolvedValue(false);
     process.env.ACCESS_TOKEN = secretKey;
     validToken = jwt.sign({ userId: 2300501 }, secretKey, { expiresIn: "5m" });
   });
