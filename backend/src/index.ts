@@ -6,6 +6,8 @@ const app: Express = express();
 
 const PORT: number | string = process.env.PORT || 3000;
 
+app.set("trust proxy", 1);
+
 app.use(express.json());
 
 // Routers

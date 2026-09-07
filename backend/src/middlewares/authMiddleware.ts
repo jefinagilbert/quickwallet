@@ -3,12 +3,13 @@ import jwt from "jsonwebtoken";
 import { ERROR_MESSAGES } from "../constants/index.js";
 import type { JwtUserPayload } from "../types/auth/authTypes.js";
 import type { ApiErrorResponse } from "../types/common/apiTypes.js";
+import { isTokenBlacklisted } from "../services/auth/blacklistService.js";
 
-const requireAuth = (
+const requireAuth = async (
   req: Request,
   res: Response<ApiErrorResponse>,
   next: NextFunction,
-): void => {
+): Promise<void> => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -38,6 +39,14 @@ const requireAuth = (
   }
 
   try {
+    const isRevoked = await isTokenBlacklisted(authToken);
+    if (isRevoked) {
+      res.status(401).json({
+        code: 401,
+        error: "Token has been revoked. Please login again",
+      });
+      return;
+    }
     const decoded = jwt.verify(authToken, secret);
 
     if (
