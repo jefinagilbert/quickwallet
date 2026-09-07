@@ -47,21 +47,20 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 26.x
+      - name: Setup Node.js 20.x
         uses: actions/setup-node@v4
         with:
-          node-version: 26.x
-          cache: "npm"
-          cache-dependency-path: "backend/package-lock.json"
+          node-version: 20.x
+          cache: "yarn"
 
       - name: Install Dependencies
-        run: npm ci
+        run: yarn install --frozen-lockfile
 
       - name: Type Check
-        run: npm run typecheck
+        run: yarn typecheck
 
       - name: Build Project
-        run: npm run build
+        run: yarn build
 
       - name: Verify Database Initialization
         run: npx tsx src/config/initDb.ts
@@ -70,4 +69,4 @@ jobs:
         run: npx tsx src/config/seedBank.ts
 
       - name: Run Tests
-        run: npm test --if-present
+        run: yarn test
