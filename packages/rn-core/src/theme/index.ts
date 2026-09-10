@@ -1,7 +1,7 @@
-export * from "./colors.js";
-export * from "./spacing.js";
-export * from "./typography.js";
-export * from "./ThemeProvider.js";
+export * from "./colors";
+export * from "./spacing";
+export * from "./typography";
+export * from "./ThemeProvider";
 
 import {
   colors,
@@ -9,10 +9,10 @@ import {
   darkColors,
   getColors,
   SemanticColors,
-} from "./colors.js";
-import { spacing, borderRadius } from "./spacing.js";
-import { fontSizes, lineHeights, fontWeights } from "./typography.js";
-import { Theme } from "./ThemeProvider.js";
+} from "./colors";
+import { spacing, borderRadius } from "./spacing";
+import { fontSizes, lineHeights, fontWeights } from "./typography";
+import { Theme } from "./ThemeProvider";
 
 export const lightTheme: Theme = {
   isDark: false,

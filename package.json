@@ -14,7 +14,7 @@
     "build:backend": "yarn workspace quickwallet-backend build",
     "typecheck:backend": "yarn workspace quickwallet-backend typecheck",
     "typecheck:frontend": "yarn workspace quickwallet typecheck",
-    "typecheck:rn-core": "yarn workspace rn-core typecheck",
+    "typecheck:rn-core": "yarn workspace @quickwallet/rn-core typecheck",
     "typecheck": "yarn typecheck:backend && yarn typecheck:frontend && yarn typecheck:rn-core",
     "test:backend": "yarn workspace quickwallet-backend test",
     "test:frontend": "yarn workspace quickwallet test",

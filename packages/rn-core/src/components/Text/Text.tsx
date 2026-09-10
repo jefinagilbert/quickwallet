@@ -4,9 +4,11 @@ import {
   TextProps as RNTextProps,
   StyleSheet,
   TextStyle,
+  View,
+  ViewStyle,
 } from 'react-native';
-import { fontSizes, lineHeights, fontWeights } from '../../theme/typography.js';
-import { useColors } from '../../theme/ThemeProvider.js';
+import { fontSizes, lineHeights, fontWeights } from '../../theme/typography';
+import { useColors } from '../../theme/ThemeProvider';
 
 export type TextVariant =
   | 'h1'
@@ -36,6 +38,10 @@ export interface TextProps extends RNTextProps {
   color?: TextColor;
   weight?: keyof typeof fontWeights;
   align?: TextStyle['textAlign'];
+  prefixIcon?: React.ReactNode;
+  suffixIcon?: React.ReactNode;
+  iconSpacing?: number;
+  containerStyle?: ViewStyle;
   children: React.ReactNode;
 }
 
@@ -44,6 +50,10 @@ export const Text: React.FC<TextProps> = ({
   color = 'primary',
   weight,
   align,
+  prefixIcon,
+  suffixIcon,
+  iconSpacing = 6,
+  containerStyle,
   style,
   children,
   ...rest
@@ -87,7 +97,7 @@ export const Text: React.FC<TextProps> = ({
 
   const textAlignStyle: TextStyle = align ? { textAlign: align } : {};
 
-  return (
+  const textNode = (
     <RNText
       style={[
         styles[variant],
@@ -101,9 +111,29 @@ export const Text: React.FC<TextProps> = ({
       {children}
     </RNText>
   );
+
+  if (prefixIcon || suffixIcon) {
+    return (
+      <View style={[styles.inlineWrapper, containerStyle]}>
+        {prefixIcon && (
+          <View style={{ marginRight: iconSpacing }}>{prefixIcon}</View>
+        )}
+        {textNode}
+        {suffixIcon && (
+          <View style={{ marginLeft: iconSpacing }}>{suffixIcon}</View>
+        )}
+      </View>
+    );
+  }
+
+  return textNode;
 };
 
 const styles = StyleSheet.create({
+  inlineWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   h1: {
     fontSize: fontSizes['3xl'],
     lineHeight: lineHeights['3xl'],

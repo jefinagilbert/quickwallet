@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
-import { spacing } from '../../theme/spacing.js';
-import { Text } from '../Text/Text.js';
-import { useColors } from '../../theme/ThemeProvider.js';
+import { spacing } from '../../theme/spacing';
+import { Text } from '../Text/Text';
+import { useColors } from '../../theme/ThemeProvider';
 
 export interface DividerProps {
   label?: string;
