@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import { ERROR_MESSAGES } from "../../constants/index.js";
 import createUserService from "../../services/auth/createUserService.js";
 import type {
@@ -8,11 +8,12 @@ import type {
 import type {
   ApiErrorResponse,
   ApiResponse,
+  TypedRequest,
 } from "../../types/common/apiTypes.js";
 import { isAppError } from "../../types/common/errorTypes.js";
 
 const createUserController = async (
-  req: Request<Record<string, never>, unknown, CreateUserInput>,
+  req: TypedRequest<CreateUserInput>,
   res: Response<ApiResponse<{ userDetails: UserPublic }> | ApiErrorResponse>,
 ): Promise<void> => {
   try {

@@ -2,8 +2,13 @@ import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { ERROR_MESSAGES } from "../constants/index.js";
 import type { JwtUserPayload } from "../types/auth/authTypes.js";
-import type { ApiErrorResponse } from "../types/common/apiTypes.js";
+import type {
+  ApiErrorResponse,
+  AuthRequest,
+} from "../types/common/apiTypes.js";
 import { isTokenBlacklisted } from "../services/auth/blacklistService.js";
+
+export type { AuthRequest };
 
 const requireAuth = async (
   req: Request,

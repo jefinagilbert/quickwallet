@@ -1,7 +1,10 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import { ERROR_MESSAGES } from "../../constants/index.js";
 import transferService from "../../services/transfer/transferService.js";
-import type { ApiErrorResponse } from "../../types/common/apiTypes.js";
+import type {
+  ApiErrorResponse,
+  AuthRequest,
+} from "../../types/common/apiTypes.js";
 import { isAppError } from "../../types/common/errorTypes.js";
 import type {
   TransferInput,
@@ -9,7 +12,7 @@ import type {
 } from "../../types/transfer/transferTypes.js";
 
 const transferController = async (
-  req: Request<Record<string, never>, unknown, TransferInput>,
+  req: AuthRequest<TransferInput>,
   res: Response<TransferResult | ApiErrorResponse>,
 ): Promise<void> => {
   const { senderId, receiverId, description, amount_in_cents } = req.body;
