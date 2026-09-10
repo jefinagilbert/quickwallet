@@ -19,6 +19,7 @@ const ERROR_MESSAGES = Object.freeze({
   INTERNAL_SERVER_ERROR: "Internal Server Error",
   UNAUTHORIZED_USER: "Unauthorized: Token not found!",
   UNAUTHORIZED_INVALID_EXPIRED: "Unauthorized: Invalid/Expired",
+  SOMETHING_WENT_WRONG: "Something went wrong",
 } as const);
 
 type TransactionStatus =
