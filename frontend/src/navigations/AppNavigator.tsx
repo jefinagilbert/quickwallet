@@ -3,16 +3,24 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useColors } from '@quickwallet/rn-core';
 import { RootStackParamList } from './types';
-import { LoginScreen, CategoryScreen, DashboardScreen } from '../screens';
-import { useAppSelector } from '../redux';
+import {
+  SplashScreen,
+  LoginScreen,
+  CategoryScreen,
+  DashboardScreen,
+} from '../screens';
+import {
+  useAppSelector,
+  selectIsAuthInitializing,
+  selectIsAuthenticated,
+} from '../redux';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export const AppNavigator: React.FC = () => {
   const colors = useColors();
-  const isAuthenticated = useAppSelector(
-    (state) => state.auth.isAuthenticated
-  );
+  const isInitializing = useAppSelector(selectIsAuthInitializing);
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
 
   return (
     <NavigationContainer
@@ -37,13 +45,15 @@ export const AppNavigator: React.FC = () => {
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
-          animation: 'slide_from_right',
+          animation: 'fade',
           contentStyle: {
             backgroundColor: colors.background.primary,
           },
         }}
       >
-        {!isAuthenticated ? (
+        {isInitializing ? (
+          <Stack.Screen name="Splash" component={SplashScreen} />
+        ) : !isAuthenticated ? (
           <Stack.Screen name="Login" component={LoginScreen} />
         ) : (
           <Stack.Group>

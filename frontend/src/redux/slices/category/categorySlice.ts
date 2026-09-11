@@ -6,7 +6,7 @@ export interface CategoryState {
 }
 
 const initialState: CategoryState = {
-  selectedCategories: ['wallet', 'food'], // Default sensible selections
+  selectedCategories: ['wallet', 'food'],
   isCompleted: false,
 };
 

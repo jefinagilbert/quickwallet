@@ -10,7 +10,13 @@ import {
   useTheme,
   Spacer,
 } from '@quickwallet/rn-core';
-import { useAppDispatch, useAppSelector, logout } from '../../redux';
+import {
+  useAppDispatch,
+  useAppSelector,
+  logoutUser,
+  selectUserEmail,
+  selectUserName,
+} from '../../redux';
 import { styles } from './DashboardScreen.styles';
 import { DashboardScreenProps } from '../../navigations/types';
 
@@ -19,25 +25,25 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) 
   const { isDark, toggleTheme } = useTheme();
   const dispatch = useAppDispatch();
 
-  const userEmail = useAppSelector((state) => state.auth.userEmail);
+  const userEmail = useAppSelector(selectUserEmail);
+  const userName = useAppSelector(selectUserName);
   const selectedCategories = useAppSelector(
     (state) => state.category.selectedCategories
   );
 
   const handleLogout = () => {
-    dispatch(logout());
+    dispatch(logoutUser());
   };
 
   return (
     <Screen contentContainerStyle={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <View style={styles.userInfo}>
           <Text variant="caption" color="muted">
             Logged in as
           </Text>
           <Text variant="h3" weight="bold">
-            {userEmail || 'User'}
+            {userName || userEmail || 'User'}
           </Text>
         </View>
 
@@ -56,7 +62,6 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) 
         </TouchableOpacity>
       </View>
 
-      {/* Balance Card */}
       <View
         style={[
           styles.balanceCard,
@@ -89,7 +94,6 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) 
         </View>
       </View>
 
-      {/* Active Selected Services Section */}
       <View style={styles.sectionHeader}>
         <Text variant="h3" weight="bold">
           Active Services
@@ -126,7 +130,6 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) 
 
       <Spacer size="lg" />
 
-      {/* Logout */}
       <Button
         title="Sign Out"
         variant="ghost"

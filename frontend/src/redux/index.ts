@@ -1,4 +1,5 @@
 export * from './store';
 export * from './hooks';
-export * from './slices/authSlice';
-export * from './slices/categorySlice';
+export * from './slices';
+export * from './selectors';
+export * from './thunks';

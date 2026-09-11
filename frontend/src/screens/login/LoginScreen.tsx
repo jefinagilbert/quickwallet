@@ -11,7 +11,14 @@ import {
   useTheme,
 } from '@quickwallet/rn-core';
 import { LOGIN_STRINGS, LOGIN_VALIDATION } from '../../constants';
-import { useAppDispatch, loginSuccess } from '../../redux';
+import {
+  useAppDispatch,
+  useAppSelector,
+  loginUser,
+  clearAuthError,
+  selectIsAuthLoading,
+  selectAuthError,
+} from '../../redux';
 import { styles } from './LoginScreen.styles';
 import { LoginScreenProps } from '../../navigations/types';
 
@@ -32,18 +39,22 @@ export const LoginScreen: React.FC<LoginProps> = ({
   const { isDark, toggleTheme } = useTheme();
   const dispatch = useAppDispatch();
 
+  const isAuthLoading = useAppSelector(selectIsAuthLoading);
+  const authError = useAppSelector(selectAuthError);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [apiError, setApiError] = useState('');
 
   const validate = (): boolean => {
     let isValid = true;
     setEmailError('');
     setPasswordError('');
-    setApiError('');
+
+    if (authError) {
+      dispatch(clearAuthError());
+    }
 
     if (!email.trim()) {
       setEmailError(LOGIN_VALIDATION.EMAIL_REQUIRED);
@@ -67,25 +78,22 @@ export const LoginScreen: React.FC<LoginProps> = ({
   const handleLogin = async () => {
     if (!validate()) return;
 
-    setLoading(true);
-    setApiError('');
-
     try {
-      await new Promise<void>((resolve) => {
-        setTimeout(() => resolve(), 600);
-      });
-      dispatch(loginSuccess({ email: email.trim() }));
-      onLoginSuccess?.(email.trim());
+      const result = await dispatch(
+        loginUser({
+          email: email.trim(),
+          password,
+        })
+      ).unwrap();
+
+      onLoginSuccess?.(result.user.email);
     } catch {
-      setApiError(LOGIN_VALIDATION.INVALID_CREDENTIALS_MSG);
-    } finally {
-      setLoading(false);
+      // Handled via Redux authError selector
     }
   };
 
   return (
     <Screen contentContainerStyle={styles.container}>
-      {/* Top Bar with Theme Toggle */}
       <View style={styles.topBar}>
         <TouchableOpacity
           onPress={toggleTheme}
@@ -114,9 +122,7 @@ export const LoginScreen: React.FC<LoginProps> = ({
         </TouchableOpacity>
       </View>
 
-      {/* Main Content (Brand & Form) */}
       <View style={styles.mainContent}>
-        {/* Brand Section */}
         <View style={styles.brandSection}>
           <View
             style={[
@@ -143,9 +149,8 @@ export const LoginScreen: React.FC<LoginProps> = ({
           </Text>
         </View>
 
-        {/* Form Section */}
         <View style={styles.formSection}>
-          {apiError ? (
+          {authError ? (
             <View
               style={[
                 styles.errorBanner,
@@ -153,7 +158,7 @@ export const LoginScreen: React.FC<LoginProps> = ({
               ]}
             >
               <Text variant="caption" color="danger" weight="medium">
-                {apiError}
+                {authError}
               </Text>
             </View>
           ) : null}
@@ -168,6 +173,7 @@ export const LoginScreen: React.FC<LoginProps> = ({
             onChangeText={(text) => {
               setEmail(text);
               if (emailError) setEmailError('');
+              if (authError) dispatch(clearAuthError());
             }}
             leftIcon={
               <Icon name="mail" size={18} color={colors.text.muted} />
@@ -185,6 +191,7 @@ export const LoginScreen: React.FC<LoginProps> = ({
             onChangeText={(text) => {
               setPassword(text);
               if (passwordError) setPasswordError('');
+              if (authError) dispatch(clearAuthError());
             }}
             leftIcon={
               <Icon name="lock" size={18} color={colors.text.muted} />
@@ -205,14 +212,13 @@ export const LoginScreen: React.FC<LoginProps> = ({
             variant="primary"
             size="lg"
             fullWidth
-            loading={loading}
+            loading={isAuthLoading}
             onPress={handleLogin}
             style={styles.submitButton}
           />
         </View>
       </View>
 
-      {/* Footer */}
       <View style={styles.footer}>
         <Text variant="body2" color="muted">
           {LOGIN_STRINGS.DONT_HAVE_ACCOUNT}

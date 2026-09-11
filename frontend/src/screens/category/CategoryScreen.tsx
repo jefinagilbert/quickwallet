@@ -44,7 +44,6 @@ export const CategoryScreen: React.FC<CategoryScreenProps> = ({
 
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Filter categories based on search query
   const filteredCategories: CategoryItem[] = useMemo(() => {
     if (!searchQuery.trim()) return CATEGORIES_LIST;
     const query = searchQuery.toLowerCase().trim();
@@ -55,13 +54,11 @@ export const CategoryScreen: React.FC<CategoryScreenProps> = ({
     );
   }, [searchQuery]);
 
-  // Entrance animations
   const headerOpacity = useRef(new Animated.Value(0)).current;
   const headerTranslateY = useRef(new Animated.Value(-20)).current;
   const actionsOpacity = useRef(new Animated.Value(0)).current;
   const actionsTranslateY = useRef(new Animated.Value(20)).current;
 
-  // Staggered animated values for category cards
   const cardAnims = useRef(
     CATEGORIES_LIST.map(() => ({
       opacity: new Animated.Value(0),
@@ -71,7 +68,6 @@ export const CategoryScreen: React.FC<CategoryScreenProps> = ({
   ).current;
 
   useEffect(() => {
-    // 1. Animate Header in
     Animated.parallel([
       Animated.timing(headerOpacity, {
         toValue: 1,
@@ -86,7 +82,6 @@ export const CategoryScreen: React.FC<CategoryScreenProps> = ({
       }),
     ]).start();
 
-    // 2. Cascade / Staggered animation for category cards
     const cardAnimations = cardAnims.map((anim) =>
       Animated.parallel([
         Animated.timing(anim.opacity, {
@@ -153,7 +148,6 @@ export const CategoryScreen: React.FC<CategoryScreenProps> = ({
 
   return (
     <Screen contentContainerStyle={styles.container}>
-      {/* Top Navigation Row */}
       <Animated.View
         style={[
           styles.topNav,
@@ -190,7 +184,6 @@ export const CategoryScreen: React.FC<CategoryScreenProps> = ({
         </TouchableOpacity>
       </Animated.View>
 
-      {/* Header Section */}
       <Animated.View
         style={[
           styles.headerSection,
@@ -208,7 +201,6 @@ export const CategoryScreen: React.FC<CategoryScreenProps> = ({
         </Text>
       </Animated.View>
 
-      {/* Search and Quick Selection Controls */}
       <Animated.View
         style={[
           styles.controlsRow,
@@ -242,7 +234,6 @@ export const CategoryScreen: React.FC<CategoryScreenProps> = ({
         </TouchableOpacity>
       </Animated.View>
 
-      {/* Live Selection Count Bar */}
       <View
         style={[
           styles.selectionInfoBar,
@@ -264,7 +255,6 @@ export const CategoryScreen: React.FC<CategoryScreenProps> = ({
         ) : null}
       </View>
 
-      {/* Animated Category Cards Grid */}
       <View style={styles.cardsContainer}>
         {filteredCategories.map((category) => {
           const originalIndex = CATEGORIES_LIST.findIndex(
@@ -304,7 +294,6 @@ export const CategoryScreen: React.FC<CategoryScreenProps> = ({
 
       <Spacer size="md" />
 
-      {/* Bottom Actions with Entrance Animation */}
       <Animated.View
         style={[
           styles.bottomActions,

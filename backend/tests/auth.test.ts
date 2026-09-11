@@ -11,6 +11,7 @@ import type {
 
 // 1. Mock the repository module before importing app
 const mockFindUserByEmail = jest.fn<(email: string) => Promise<User | null>>();
+const mockFindUserById = jest.fn<(id: number) => Promise<User | null>>();
 const mockCreateUserWithBonus =
   jest.fn<
     (
@@ -40,6 +41,7 @@ jest.unstable_mockModule("../src/services/auth/blacklistService.js", () => ({
 
 jest.unstable_mockModule("../src/repositories/auth/authRepository.js", () => ({
   findUserByEmail: mockFindUserByEmail,
+  findUserById: mockFindUserById,
   createUser: mockCreateUser,
   createUserWithBonus: mockCreateUserWithBonus,
 }));

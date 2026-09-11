@@ -4,6 +4,7 @@ import type {
 } from '@react-navigation/native-stack';
 
 export type RootStackParamList = {
+  Splash: undefined;
   Login: undefined;
   Category: undefined;
   Dashboard: undefined;
