@@ -7,8 +7,8 @@ import {
   StyleSheet,
   ViewStyle,
 } from 'react-native';
-import { Text } from '../Text/Text.js';
-import { useColors } from '../../theme/ThemeProvider.js';
+import { Text } from '../Text/Text';
+import { useColors } from '../../theme/ThemeProvider';
 
 export type AvatarSize = 'sm' | 'md' | 'lg' | 'xl';
 

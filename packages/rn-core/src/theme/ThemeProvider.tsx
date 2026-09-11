@@ -1,12 +1,12 @@
-import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
+import React, { createContext, useContext, useState, useMemo } from 'react';
 import { useColorScheme } from 'react-native';
 import {
   SemanticColors,
   lightColors,
   darkColors,
   getColors,
-} from './colors.js';
-import { spacing, borderRadius, SpacingType, BorderRadiusType } from './spacing.js';
+} from './colors';
+import { spacing, borderRadius, SpacingType, BorderRadiusType } from './spacing';
 import {
   fontSizes,
   lineHeights,
@@ -14,7 +14,7 @@ import {
   FontSizesType,
   LineHeightsType,
   FontWeightsType,
-} from './typography.js';
+} from './typography';
 
 export type ThemeMode = 'light' | 'dark' | 'auto';
 

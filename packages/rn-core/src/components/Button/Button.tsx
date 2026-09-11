@@ -7,9 +7,9 @@ import {
   ViewStyle,
   TextStyle,
 } from 'react-native';
-import { spacing, borderRadius } from '../../theme/spacing.js';
-import { Text } from '../Text/Text.js';
-import { useColors } from '../../theme/ThemeProvider.js';
+import { spacing, borderRadius } from '../../theme/spacing';
+import { Text } from '../Text/Text';
+import { useColors } from '../../theme/ThemeProvider';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
 export type ButtonSize = 'sm' | 'md' | 'lg';

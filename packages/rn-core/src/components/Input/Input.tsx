@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import {
   View,
-  TextInput as RNTextInput,
+  TextInput,
   TextInputProps as RNTextInputProps,
   StyleSheet,
   ViewStyle,
   TextStyle,
   TouchableOpacity,
 } from 'react-native';
-import { spacing, borderRadius } from '../../theme/spacing.js';
-import { fontSizes } from '../../theme/typography.js';
-import { Text } from '../Text/Text.js';
-import { useColors } from '../../theme/ThemeProvider.js';
+import { spacing, borderRadius } from '../../theme/spacing';
+import { fontSizes } from '../../theme/typography';
+import { Text } from '../Text/Text';
+import { Icon } from '../Icon/Icon';
+import { useColors } from '../../theme/ThemeProvider';
 
 export interface InputProps extends RNTextInputProps {
   label?: string;
@@ -66,7 +67,7 @@ export const Input: React.FC<InputProps> = ({
       >
         {leftIcon && <View style={styles.iconContainer}>{leftIcon}</View>}
 
-        <RNTextInput
+        <TextInput
           placeholderTextColor={colors.input.placeholder}
           secureTextEntry={isPassword ? hidePassword : secureTextEntry}
           onFocus={() => setIsFocused(true)}
@@ -86,10 +87,14 @@ export const Input: React.FC<InputProps> = ({
           <TouchableOpacity
             onPress={() => setHidePassword(!hidePassword)}
             style={styles.iconContainer}
+            activeOpacity={0.6}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <Text variant="caption" color="muted" weight="semibold">
-              {hidePassword ? 'SHOW' : 'HIDE'}
-            </Text>
+            <Icon
+              name={hidePassword ? 'eye-off' : 'eye'}
+              size={20}
+              color={colors.text.muted}
+            />
           </TouchableOpacity>
         ) : (
           rightIcon && <View style={styles.iconContainer}>{rightIcon}</View>

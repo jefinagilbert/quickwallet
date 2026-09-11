@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
-import { spacing, borderRadius } from '../../theme/spacing.js';
-import { Text } from '../Text/Text.js';
-import { useColors } from '../../theme/ThemeProvider.js';
+import { spacing, borderRadius } from '../../theme/spacing';
+import { Text } from '../Text/Text';
+import { useColors } from '../../theme/ThemeProvider';
 
 export type BadgeVariant = 'solid' | 'subtle' | 'outline';
 export type BadgeColor = 'primary' | 'success' | 'danger' | 'warning' | 'info' | 'neutral';

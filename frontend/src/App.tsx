@@ -1,43 +1,41 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet } from 'react-native';
 import {
   SafeAreaProvider,
-  useSafeAreaInsets,
+  initialWindowMetrics,
 } from 'react-native-safe-area-context';
+import { Provider } from 'react-redux';
+import { ThemeProvider } from '@quickwallet/rn-core';
+import { store, useAppDispatch, initAuthSession } from './redux';
+import { AppNavigator } from './navigations';
+
+const AppBootstrap: React.FC = () => {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(initAuthSession());
+  }, [dispatch]);
+
+  return <AppNavigator />;
+};
 
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
-
   return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
-  );
-}
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
+    <Provider store={store}>
+      <SafeAreaProvider
+        initialMetrics={initialWindowMetrics}
+        style={styles.root}
+      >
+        <ThemeProvider initialMode="auto">
+          <AppBootstrap />
+        </ThemeProvider>
+      </SafeAreaProvider>
+    </Provider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  root: {
     flex: 1,
   },
 });
