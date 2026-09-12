@@ -73,15 +73,6 @@ export const CATEGORIES_LIST: CategoryItem[] = [
 ];
 
 export const CATEGORY_STRINGS = {
-  STEP_INDICATOR: 'Step 2 of 2',
-  HEADER_TITLE: 'Customize Your Services',
-  HEADER_SUBTITLE:
-    'Pick the categories you use the most. We will tailor your QuickWallet dashboard to match your daily life.',
-  SEARCH_PLACEHOLDER: 'Search services...',
-  SELECT_ALL: 'Select All',
-  DESELECT_ALL: 'Clear All',
-  CONTINUE_BUTTON: 'Continue to Dashboard',
-  SKIP_BUTTON: 'Skip for Now',
-  SELECTED_COUNT: (count: number) =>
-    count === 1 ? '1 service selected' : `${count} services selected`,
+  HEADER_TITLE: 'All Categories',
+  HEADER_SUBTITLE: 'Select a category to open its dashboard',
 } as const;

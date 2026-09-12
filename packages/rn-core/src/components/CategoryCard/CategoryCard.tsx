@@ -12,6 +12,8 @@ import { Badge } from '../Badge/Badge';
 import { useColors } from '../../theme/ThemeProvider';
 import { spacing, borderRadius } from '../../theme/spacing';
 
+export type CategoryCardLayout = 'grid' | 'list';
+
 export interface CategoryCardProps {
   id: string;
   title: string;
@@ -19,7 +21,9 @@ export interface CategoryCardProps {
   iconName: IconName;
   accentColor?: string;
   isSelected?: boolean;
+  showSelectionIndicator?: boolean;
   badgeText?: string;
+  layout?: CategoryCardLayout;
   onPress: (id: string) => void;
   style?: StyleProp<ViewStyle>;
 }
@@ -31,7 +35,9 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
   iconName,
   accentColor,
   isSelected = false,
+  showSelectionIndicator = false,
   badgeText,
+  layout = 'grid',
   onPress,
   style,
 }) => {
@@ -39,34 +45,35 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
 
   const themeAccent = accentColor || colors.primary.main;
 
-  return (
-    <TouchableOpacity
-      activeOpacity={0.7}
-      onPress={() => onPress(id)}
-      style={[
-        styles.card,
-        {
-          backgroundColor: isSelected
-            ? colors.isDark
-              ? '#1E1B4B'
-              : '#EEF2FF'
-            : colors.surface.primary,
-          borderColor: isSelected
-            ? colors.primary.main
-            : colors.card.border,
-          shadowColor: isSelected ? colors.primary.main : colors.card.shadowColor,
-          shadowOpacity: isSelected ? (colors.isDark ? 0.35 : 0.18) : (colors.isDark ? 0.2 : 0.05),
-          shadowRadius: isSelected ? 10 : 4,
-          elevation: isSelected ? 4 : 2,
-        },
-        style,
-      ]}
-    >
-      {/* Header Row: Icon Badge & Check / Selection Indicator */}
-      <View style={styles.headerRow}>
+  const cardDynamicStyle = {
+    backgroundColor: isSelected
+      ? colors.isDark
+        ? '#1E1B4B'
+        : '#EEF2FF'
+      : colors.surface.primary,
+    borderColor: isSelected ? colors.primary.main : colors.card.border,
+    shadowColor: isSelected ? colors.primary.main : colors.card.shadowColor,
+    shadowOpacity: isSelected
+      ? colors.isDark
+        ? 0.35
+        : 0.18
+      : colors.isDark
+      ? 0.2
+      : 0.05,
+    shadowRadius: isSelected ? 8 : 4,
+    elevation: isSelected ? 4 : 2,
+  };
+
+  if (layout === 'list') {
+    return (
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={() => onPress(id)}
+        style={[styles.listCard, cardDynamicStyle, style]}
+      >
         <View
           style={[
-            styles.iconWrapper,
+            styles.listIconWrapper,
             {
               backgroundColor: isSelected
                 ? themeAccent
@@ -83,11 +90,33 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
           />
         </View>
 
-        <View style={styles.badgeRow}>
-          {badgeText && !isSelected ? (
-            <Badge label={badgeText} variant="subtle" color="primary" />
-          ) : null}
+        <View style={styles.listContent}>
+          <View style={styles.listTitleRow}>
+            <Text
+              variant="body1"
+              weight={isSelected ? 'bold' : 'semibold'}
+              color="primary"
+            >
+              {title}
+            </Text>
+            {badgeText && !isSelected ? (
+              <Badge label={badgeText} variant="subtle" color="primary" />
+            ) : null}
+          </View>
 
+          {description ? (
+            <Text
+              variant="caption"
+              color="muted"
+              numberOfLines={2}
+              style={styles.listDescription}
+            >
+              {description}
+            </Text>
+          ) : null}
+        </View>
+
+        {showSelectionIndicator ? (
           <View
             style={[
               styles.checkIndicator,
@@ -105,16 +134,98 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
           >
             {isSelected && <Icon name="check" size={12} color="#FFFFFF" />}
           </View>
+        ) : (
+          <Icon
+            name="chevron-right"
+            size={18}
+            color={colors.text.muted}
+          />
+        )}
+      </TouchableOpacity>
+    );
+  }
+
+  // Grid Layout (Default)
+  return (
+    <TouchableOpacity
+      activeOpacity={0.7}
+      onPress={() => onPress(id)}
+      style={[styles.gridCard, cardDynamicStyle, style]}
+    >
+      {/* Top Header Row */}
+      <View style={styles.gridHeaderRow}>
+        <View
+          style={[
+            styles.gridIconWrapper,
+            {
+              backgroundColor: isSelected
+                ? themeAccent
+                : colors.isDark
+                ? '#1E293B'
+                : '#F1F5F9',
+            },
+          ]}
+        >
+          <Icon
+            name={iconName}
+            size={20}
+            color={isSelected ? '#FFFFFF' : themeAccent}
+          />
+        </View>
+
+        <View style={styles.gridHeaderRight}>
+          {badgeText && !isSelected ? (
+            <View
+              style={[
+                styles.miniBadge,
+                {
+                  backgroundColor: colors.isDark
+                    ? '#312E81'
+                    : '#EEF2FF',
+                },
+              ]}
+            >
+              <Text
+                variant="caption"
+                weight="bold"
+                color="primary"
+                style={styles.miniBadgeText}
+              >
+                {badgeText}
+              </Text>
+            </View>
+          ) : null}
+
+          {showSelectionIndicator && (
+            <View
+              style={[
+                styles.checkIndicator,
+                {
+                  borderColor: isSelected
+                    ? colors.primary.main
+                    : colors.isDark
+                    ? '#334155'
+                    : '#CBD5E1',
+                  backgroundColor: isSelected
+                    ? colors.primary.main
+                    : 'transparent',
+                },
+              ]}
+            >
+              {isSelected && <Icon name="check" size={12} color="#FFFFFF" />}
+            </View>
+          )}
         </View>
       </View>
 
-      {/* Content Section */}
-      <View style={styles.contentSection}>
+      {/* Body Content */}
+      <View style={styles.gridBody}>
         <Text
-          variant="body1"
+          variant="body2"
           weight={isSelected ? 'bold' : 'semibold'}
           color="primary"
-          style={styles.title}
+          numberOfLines={2}
+          style={styles.gridTitle}
         >
           {title}
         </Text>
@@ -124,7 +235,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
             variant="caption"
             color="muted"
             numberOfLines={2}
-            style={styles.description}
+            style={styles.gridDescription}
           >
             {description}
           </Text>
@@ -135,46 +246,93 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
 };
 
 const styles = StyleSheet.create({
-  card: {
+  // Grid Card Styles
+  gridCard: {
+    borderRadius: borderRadius.lg,
+    borderWidth: 1.5,
+    padding: spacing.sm + 3,
+    shadowOffset: { width: 0, height: 2 },
+    minHeight: 136,
+    justifyContent: 'space-between',
+  },
+  gridHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: spacing.xs,
+  },
+  gridHeaderRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  gridIconWrapper: {
+    width: 40,
+    height: 40,
+    borderRadius: borderRadius.md,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  miniBadge: {
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: borderRadius.full,
+  },
+  miniBadgeText: {
+    fontSize: 9.5,
+    lineHeight: 12,
+  },
+  gridBody: {
+    marginTop: spacing.xs,
+  },
+  gridTitle: {
+    lineHeight: 18,
+    marginBottom: 3,
+  },
+  gridDescription: {
+    lineHeight: 14,
+    fontSize: 11,
+  },
+
+  // List Card Styles
+  listCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
     borderRadius: borderRadius.lg,
     borderWidth: 1.5,
     padding: spacing.base,
     shadowOffset: { width: 0, height: 2 },
-    minHeight: 128,
-    justifyContent: 'space-between',
+    minHeight: 80,
   },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  iconWrapper: {
+  listIconWrapper: {
     width: 44,
     height: 44,
     borderRadius: borderRadius.md,
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: spacing.md,
   },
-  badgeRow: {
+  listContent: {
+    flex: 1,
+    marginRight: spacing.sm,
+  },
+  listTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
+    marginBottom: 2,
   },
+  listDescription: {
+    lineHeight: 16,
+  },
+
+  // Common Selection Indicator
   checkIndicator: {
-    width: 22,
-    height: 22,
+    width: 20,
+    height: 20,
     borderRadius: borderRadius.full,
     borderWidth: 1.5,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  contentSection: {
-    marginTop: spacing.md,
-  },
-  title: {
-    marginBottom: 2,
-  },
-  description: {
-    lineHeight: 16,
   },
 });

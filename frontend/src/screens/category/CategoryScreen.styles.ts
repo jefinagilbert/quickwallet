@@ -2,75 +2,37 @@ import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
-    paddingTop: 12,
-    paddingBottom: 40,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 36,
   },
-  topNav: {
+  headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
+    alignItems: 'flex-start',
+    marginBottom: 8,
   },
-  stepPill: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 20,
-  },
-  themeToggle: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 20,
-  },
-  headerSection: {
-    marginBottom: 20,
+  headerTextContainer: {
+    flex: 1,
+    marginRight: 16,
   },
   subtitle: {
-    marginTop: 8,
+    marginTop: 6,
     lineHeight: 20,
   },
-  controlsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  themeToggle: {
+    padding: 10,
+    borderRadius: 22,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16,
-    gap: 12,
-  },
-  searchContainer: {
-    flex: 1,
-    marginVertical: 0,
-  },
-  searchInput: {
-    height: 42,
-    fontSize: 14,
-  },
-  toggleAllBtn: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-  },
-  selectionInfoBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 12,
-    marginBottom: 18,
-  },
-  cardsContainer: {
-    gap: 14,
   },
   cardAnimWrapper: {
     width: '100%',
   },
-  bottomActions: {
-    marginTop: 28,
-    gap: 12,
+  cardOpening: {
+    zIndex: 99,
   },
-  skipButton: {
-    alignSelf: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+  cardDefault: {
+    zIndex: 1,
   },
 });

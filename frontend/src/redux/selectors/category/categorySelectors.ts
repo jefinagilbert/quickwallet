@@ -13,6 +13,11 @@ export const selectSelectedCategoryCount = createSelector(
   selected => selected.length,
 );
 
+export const selectActiveCategory = createSelector(
+  [selectCategoryState],
+  category => category.activeCategory,
+);
+
 export const selectIsCategoryCompleted = createSelector(
   [selectCategoryState],
   category => category.isCompleted,
