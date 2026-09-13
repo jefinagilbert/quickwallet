@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
 import { spacing, borderRadius } from '../../theme/spacing';
-import { Text } from '../Text/Text';
+import { Text, TextColor } from '../Text/Text';
 import { useColors } from '../../theme/ThemeProvider';
 
 export type BadgeVariant = 'solid' | 'subtle' | 'outline';
@@ -22,7 +22,7 @@ export const Badge: React.FC<BadgeProps> = ({
 }) => {
   const colors = useColors();
 
-  const getBadgeStyle = (): { container: ViewStyle; textColor: any } => {
+  const getBadgeStyle = (): { container: ViewStyle; textColor: TextColor } => {
     const colorMap: Record<BadgeColor, { bg: string; text: string; subtleBg: string }> = {
       primary: {
         bg: colors.primary.main,

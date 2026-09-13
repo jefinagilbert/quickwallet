@@ -1,7 +1,7 @@
-import pool from "../../config/db.js";
-import { ERROR_MESSAGES } from "../../constants/index.js";
-import { AppError } from "../../types/index.js";
-import { IThreadReturntype } from "../../types/messaging/createThreads.types.js";
+import pool from '../../config/db.js';
+import { ERROR_MESSAGES } from '../../constants/index.js';
+import { AppError } from '../../types/index.js';
+import { IThreadReturntype } from '../../types/messaging/createThreads.types.js';
 
 const createThreadRepository = async (
   userIds: Array<number>,
@@ -9,7 +9,7 @@ const createThreadRepository = async (
 ): IThreadReturntype => {
   const client = await pool.connect();
 
-  await client.query("BEGIN");
+  await client.query('BEGIN');
 
   try {
     const thread_data = await client.query(
@@ -36,7 +36,7 @@ const createThreadRepository = async (
     return {
       threadId,
     };
-  } catch (e: unknown) {
+  } catch (_e: unknown) {
     await client.query(`ROLLBACK`);
     throw new AppError(500, ERROR_MESSAGES.SOMETHING_WENT_WRONG);
   } finally {

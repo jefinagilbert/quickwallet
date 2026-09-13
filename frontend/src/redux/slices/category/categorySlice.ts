@@ -1,12 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface CategoryState {
+  activeCategory: string | null;
   selectedCategories: string[];
   isCompleted: boolean;
 }
 
 const initialState: CategoryState = {
-  selectedCategories: ['wallet', 'food'],
+  activeCategory: 'wallet',
+  selectedCategories: ['wallet'],
   isCompleted: false,
 };
 
@@ -14,6 +16,11 @@ export const categorySlice = createSlice({
   name: 'category',
   initialState,
   reducers: {
+    setActiveCategory: (state, action: PayloadAction<string>) => {
+      state.activeCategory = action.payload;
+      state.selectedCategories = [action.payload];
+      state.isCompleted = true;
+    },
     toggleCategory: (state, action: PayloadAction<string>) => {
       const categoryId = action.payload;
       const index = state.selectedCategories.indexOf(categoryId);
@@ -36,13 +43,15 @@ export const categorySlice = createSlice({
       state.isCompleted = true;
     },
     resetCategorySelection: state => {
-      state.selectedCategories = ['wallet', 'food'];
+      state.activeCategory = 'wallet';
+      state.selectedCategories = ['wallet'];
       state.isCompleted = false;
     },
   },
 });
 
 export const {
+  setActiveCategory,
   toggleCategory,
   setCategories,
   selectAllCategories,

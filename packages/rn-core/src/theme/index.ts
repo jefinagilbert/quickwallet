@@ -1,18 +1,12 @@
-export * from "./colors";
-export * from "./spacing";
-export * from "./typography";
-export * from "./ThemeProvider";
+export * from './colors';
+export * from './spacing';
+export * from './typography';
+export * from './ThemeProvider';
 
-import {
-  colors,
-  lightColors,
-  darkColors,
-  getColors,
-  SemanticColors,
-} from "./colors";
-import { spacing, borderRadius } from "./spacing";
-import { fontSizes, lineHeights, fontWeights } from "./typography";
-import { Theme } from "./ThemeProvider";
+import { lightColors, darkColors } from './colors';
+import { spacing, borderRadius } from './spacing';
+import { fontSizes, lineHeights, fontWeights } from './typography';
+import { Theme } from './ThemeProvider';
 
 export const lightTheme: Theme = {
   isDark: false,

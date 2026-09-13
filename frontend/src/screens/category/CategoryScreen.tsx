@@ -1,14 +1,14 @@
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import {
   Animated,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import {
-  Button,
   CategoryCard,
+  CategoryGrid,
   Icon,
-  Input,
   Screen,
   Spacer,
   Text,
@@ -18,15 +18,10 @@ import {
 import {
   CATEGORIES_LIST,
   CATEGORY_STRINGS,
-  CategoryItem,
 } from '../../constants';
 import {
   useAppDispatch,
-  useAppSelector,
-  toggleCategory,
-  selectAllCategories,
-  clearCategories,
-  completeCategorySelection,
+  setActiveCategory,
 } from '../../redux';
 import { styles } from './CategoryScreen.styles';
 import { CategoryScreenProps } from '../../navigations/types';
@@ -38,133 +33,160 @@ export const CategoryScreen: React.FC<CategoryScreenProps> = ({
   const { isDark, toggleTheme } = useTheme();
   const dispatch = useAppDispatch();
 
-  const selectedCategories = useAppSelector(
-    (state) => state.category.selectedCategories
-  );
-
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const filteredCategories: CategoryItem[] = useMemo(() => {
-    if (!searchQuery.trim()) return CATEGORIES_LIST;
-    const query = searchQuery.toLowerCase().trim();
-    return CATEGORIES_LIST.filter(
-      (cat) =>
-        cat.title.toLowerCase().includes(query) ||
-        cat.description.toLowerCase().includes(query)
-    );
-  }, [searchQuery]);
+  const [openingId, setOpeningId] = useState<string | null>(null);
 
   const headerOpacity = useRef(new Animated.Value(0)).current;
   const headerTranslateY = useRef(new Animated.Value(-20)).current;
-  const actionsOpacity = useRef(new Animated.Value(0)).current;
-  const actionsTranslateY = useRef(new Animated.Value(20)).current;
 
   const cardAnims = useRef(
     CATEGORIES_LIST.map(() => ({
       opacity: new Animated.Value(0),
-      translateY: new Animated.Value(40),
+      translateY: new Animated.Value(30),
       scale: new Animated.Value(0.92),
     }))
   ).current;
 
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(headerOpacity, {
-        toValue: 1,
-        duration: 400,
-        useNativeDriver: true,
-      }),
-      Animated.spring(headerTranslateY, {
-        toValue: 0,
-        friction: 7,
-        tension: 50,
-        useNativeDriver: true,
-      }),
-    ]).start();
+  // Staggered entrance animation when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      setOpeningId(null);
 
-    const cardAnimations = cardAnims.map((anim) =>
-      Animated.parallel([
-        Animated.timing(anim.opacity, {
-          toValue: 1,
-          duration: 350,
-          useNativeDriver: true,
-        }),
-        Animated.spring(anim.translateY, {
-          toValue: 0,
-          friction: 6,
-          tension: 60,
-          useNativeDriver: true,
-        }),
-        Animated.spring(anim.scale, {
-          toValue: 1,
-          friction: 6,
-          tension: 60,
-          useNativeDriver: true,
-        }),
-      ])
-    );
+      // Reset values
+      headerOpacity.setValue(0);
+      headerTranslateY.setValue(-20);
+      cardAnims.forEach((anim) => {
+        anim.opacity.setValue(0);
+        anim.translateY.setValue(30);
+        anim.scale.setValue(0.92);
+      });
 
-    Animated.sequence([
-      Animated.delay(150),
-      Animated.stagger(70, cardAnimations),
+      // Animate header
       Animated.parallel([
-        Animated.timing(actionsOpacity, {
+        Animated.timing(headerOpacity, {
           toValue: 1,
-          duration: 300,
+          duration: 380,
           useNativeDriver: true,
         }),
-        Animated.spring(actionsTranslateY, {
+        Animated.spring(headerTranslateY, {
           toValue: 0,
           friction: 7,
           tension: 50,
           useNativeDriver: true,
         }),
-      ]),
-    ]).start();
-  }, [cardAnims, headerOpacity, headerTranslateY, actionsOpacity, actionsTranslateY]);
+      ]).start();
 
-  const handleToggleCategory = (id: string) => {
-    dispatch(toggleCategory(id));
-  };
+      // Cascade cards
+      const cardAnimations = cardAnims.map((anim) =>
+        Animated.parallel([
+          Animated.timing(anim.opacity, {
+            toValue: 1,
+            duration: 320,
+            useNativeDriver: true,
+          }),
+          Animated.spring(anim.translateY, {
+            toValue: 0,
+            friction: 6,
+            tension: 65,
+            useNativeDriver: true,
+          }),
+          Animated.spring(anim.scale, {
+            toValue: 1,
+            friction: 6,
+            tension: 65,
+            useNativeDriver: true,
+          }),
+        ])
+      );
 
-  const isAllSelected = selectedCategories.length === CATEGORIES_LIST.length;
+      Animated.sequence([
+        Animated.delay(80),
+        Animated.stagger(40, cardAnimations),
+      ]).start();
+    }, [cardAnims, headerOpacity, headerTranslateY])
+  );
 
-  const handleToggleSelectAll = () => {
-    if (isAllSelected) {
-      dispatch(clearCategories());
-    } else {
-      dispatch(selectAllCategories(CATEGORIES_LIST.map((c) => c.id)));
-    }
-  };
+  // Cinematic Open Category Transition Effect
+  const handleOpenCategory = (categoryId: string) => {
+    if (openingId) return; // Prevent multi-clicks during transition
+    setOpeningId(categoryId);
 
-  const handleContinue = () => {
-    dispatch(completeCategorySelection());
-    navigation.navigate('Dashboard');
-  };
+    const selectedIndex = CATEGORIES_LIST.findIndex((c) => c.id === categoryId);
+    const selectedAnim = cardAnims[selectedIndex >= 0 ? selectedIndex : 0];
 
-  const handleSkip = () => {
-    navigation.navigate('Dashboard');
+    // 1. Highlight & bounce the selected card
+    const selectedCardPop = Animated.sequence([
+      Animated.timing(selectedAnim.scale, {
+        toValue: 0.92,
+        duration: 90,
+        useNativeDriver: true,
+      }),
+      Animated.spring(selectedAnim.scale, {
+        toValue: 1.08,
+        friction: 4,
+        tension: 80,
+        useNativeDriver: true,
+      }),
+    ]);
+
+    // 2. Fade & drop other cards
+    const otherCardAnimations = cardAnims
+      .filter((_, idx) => idx !== selectedIndex)
+      .map((anim) =>
+        Animated.parallel([
+          Animated.timing(anim.opacity, {
+            toValue: 0.15,
+            duration: 250,
+            useNativeDriver: true,
+          }),
+          Animated.timing(anim.translateY, {
+            toValue: 20,
+            duration: 250,
+            useNativeDriver: true,
+          }),
+          Animated.timing(anim.scale, {
+            toValue: 0.95,
+            duration: 250,
+            useNativeDriver: true,
+          }),
+        ])
+      );
+
+    // 3. Fade header
+    const headerFade = Animated.timing(headerOpacity, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: true,
+    });
+
+    Animated.parallel([
+      selectedCardPop,
+      ...otherCardAnimations,
+      headerFade,
+    ]).start(() => {
+      // 4. Dispatch active category & navigate to Dashboard
+      dispatch(setActiveCategory(categoryId));
+      navigation.navigate('Dashboard');
+    });
   };
 
   return (
     <Screen contentContainerStyle={styles.container}>
+      {/* Top Header: Title & Theme Switcher */}
       <Animated.View
         style={[
-          styles.topNav,
+          styles.headerRow,
           {
             opacity: headerOpacity,
             transform: [{ translateY: headerTranslateY }],
           },
         ]}
       >
-        <View
-          style={[
-            styles.stepPill,
-            { backgroundColor: colors.surface.secondary },
-          ]}
-        >
-          <Text variant="caption" weight="bold" color="primary">
-            {CATEGORY_STRINGS.STEP_INDICATOR}
+        <View style={styles.headerTextContainer}>
+          <Text variant="h1" weight="bold">
+            {CATEGORY_STRINGS.HEADER_TITLE}
+          </Text>
+          <Text variant="body2" color="muted" style={styles.subtitle}>
+            {CATEGORY_STRINGS.HEADER_SUBTITLE}
           </Text>
         </View>
 
@@ -178,96 +200,32 @@ export const CategoryScreen: React.FC<CategoryScreenProps> = ({
         >
           <Icon
             name={isDark ? 'sun' : 'moon'}
-            size={16}
+            size={18}
             color={colors.text.primary}
           />
         </TouchableOpacity>
       </Animated.View>
 
-      <Animated.View
-        style={[
-          styles.headerSection,
-          {
-            opacity: headerOpacity,
-            transform: [{ translateY: headerTranslateY }],
-          },
-        ]}
-      >
-        <Text variant="h1" weight="bold">
-          {CATEGORY_STRINGS.HEADER_TITLE}
-        </Text>
-        <Text variant="body2" color="muted" style={styles.subtitle}>
-          {CATEGORY_STRINGS.HEADER_SUBTITLE}
-        </Text>
-      </Animated.View>
+      <Spacer size="md" />
 
-      <Animated.View
-        style={[
-          styles.controlsRow,
-          {
-            opacity: headerOpacity,
-          },
-        ]}
-      >
-        <Input
-          placeholder={CATEGORY_STRINGS.SEARCH_PLACEHOLDER}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          leftIcon={<Icon name="search" size={16} color={colors.text.muted} />}
-          containerStyle={styles.searchContainer}
-          inputStyle={styles.searchInput}
-        />
-
-        <TouchableOpacity
-          onPress={handleToggleSelectAll}
-          style={[
-            styles.toggleAllBtn,
-            { backgroundColor: colors.surface.secondary },
-          ]}
-          activeOpacity={0.7}
-        >
-          <Text variant="caption" weight="semibold" color="primary">
-            {isAllSelected
-              ? CATEGORY_STRINGS.DESELECT_ALL
-              : CATEGORY_STRINGS.SELECT_ALL}
-          </Text>
-        </TouchableOpacity>
-      </Animated.View>
-
-      <View
-        style={[
-          styles.selectionInfoBar,
-          { backgroundColor: colors.surface.secondary },
-        ]}
-      >
-        <Text variant="caption" color="secondary" weight="medium">
-          {CATEGORY_STRINGS.SELECTED_COUNT(selectedCategories.length)}
-        </Text>
-        {selectedCategories.length > 0 ? (
-          <TouchableOpacity
-            onPress={() => dispatch(clearCategories())}
-            activeOpacity={0.6}
-          >
-            <Text variant="caption" color="danger" weight="semibold">
-              Reset
-            </Text>
-          </TouchableOpacity>
-        ) : null}
-      </View>
-
-      <View style={styles.cardsContainer}>
-        {filteredCategories.map((category) => {
+      {/* 2-Column Category Grid with Interactive Effects */}
+      <CategoryGrid
+        data={CATEGORIES_LIST}
+        numColumns={2}
+        gap={12}
+        onItemPress={handleOpenCategory}
+        renderItem={(category) => {
           const originalIndex = CATEGORIES_LIST.findIndex(
             (c) => c.id === category.id
           );
           const anim = cardAnims[originalIndex >= 0 ? originalIndex : 0];
-          const isSelected = selectedCategories.includes(category.id);
+          const isOpeningThis = openingId === category.id;
 
           return (
             <Animated.View
-              key={category.id}
               style={[
                 styles.cardAnimWrapper,
+                isOpeningThis ? styles.cardOpening : styles.cardDefault,
                 {
                   opacity: anim.opacity,
                   transform: [
@@ -284,43 +242,17 @@ export const CategoryScreen: React.FC<CategoryScreenProps> = ({
                 iconName={category.iconName}
                 accentColor={category.accentColor}
                 badgeText={category.badgeText}
-                isSelected={isSelected}
-                onPress={handleToggleCategory}
+                isSelected={isOpeningThis}
+                layout="grid"
+                showSelectionIndicator={false}
+                onPress={handleOpenCategory}
               />
             </Animated.View>
           );
-        })}
-      </View>
+        }}
+      />
 
-      <Spacer size="md" />
-
-      <Animated.View
-        style={[
-          styles.bottomActions,
-          {
-            opacity: actionsOpacity,
-            transform: [{ translateY: actionsTranslateY }],
-          },
-        ]}
-      >
-        <Button
-          title={CATEGORY_STRINGS.CONTINUE_BUTTON}
-          variant="primary"
-          size="lg"
-          fullWidth
-          onPress={handleContinue}
-        />
-
-        <TouchableOpacity
-          onPress={handleSkip}
-          style={styles.skipButton}
-          activeOpacity={0.6}
-        >
-          <Text variant="body2" color="muted" weight="medium" align="center">
-            {CATEGORY_STRINGS.SKIP_BUTTON}
-          </Text>
-        </TouchableOpacity>
-      </Animated.View>
+      <Spacer size="xl" />
     </Screen>
   );
 };
